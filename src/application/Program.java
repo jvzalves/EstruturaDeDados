@@ -6,14 +6,14 @@ import java.util.Scanner;
 
 import entities.Conta;
 import entities.ContaPoupanca;
-import entities.Pilha;
+import entities.Lista;
 import enums.TipoDeConta;
 
 public class Program {
 
 	static NumberFormat fmt = NumberFormat.getCurrencyInstance(); // imprimindo o saldo atualizado formatado como moeda
 																	// brasileira
-	private static Pilha pilhaContas = new Pilha();
+	private static Lista ListaContas = new Lista();
 	static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[] args) {
@@ -34,7 +34,7 @@ public class Program {
 		String tipoConta = sc.nextLine();
 
 		Conta conta = new Conta(name, email, cpf, TipoDeConta.valueOf(tipoConta));
-		pilhaContas.push(conta);
+		ListaContas.insert(conta);
 		System.out.println();
 		System.out.print("Conta criada com sucesso!");
 		System.out.println();
@@ -94,7 +94,7 @@ public class Program {
 			terminal(conta);
 		} else if (option == 3) {
 
-			consultarContas(pilhaContas);
+			consultarConta(ListaContas);
 			System.out.println();
 			terminal(conta);
 
@@ -109,15 +109,18 @@ public class Program {
 		}
 	}
 
-	private static void consultarContas(Pilha<Conta> pilhaContas) {
-		if (pilhaContas.isEmpty()) {
-			System.out.println("Não há contas para serem exibidas.");
-			return;
-		}
-		Locale ptBr = new Locale("pt", "BR");
-		for (Conta conta : pilhaContas) {
-			System.out.println(conta);
-			System.out.println("Saldo atual: " + fmt.format(conta.getBalance()));
+	private static void consultarConta(Lista ListaContas) {
+		if (ListaContas != null && ListaContas.getFirst() != null) {
+			Locale ptBr = new Locale("pt", "BR");
+			NumberFormat nf = NumberFormat.getCurrencyInstance(ptBr);
+
+			ListaContas.last();
+			do {
+				Conta conta = (Conta) ListaContas.info();
+				System.out.println(conta);
+				System.out.println("Saldo atual: " + nf.format(conta.getBalance()));
+				ListaContas.next();
+			} while (ListaContas.getCurrent() != null);
 		}
 	}
 
